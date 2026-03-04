@@ -3,7 +3,7 @@
 import { useMemo, useRef, useEffect } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
-import { createLedTexture } from "./SkyAds";
+import { createLedTexture } from "./LedTexture";
 
 interface Props {
   width: number;

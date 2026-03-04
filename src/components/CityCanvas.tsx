@@ -9,9 +9,8 @@ import CityScene from "./CityScene";
 import type { FocusInfo } from "./CityScene";
 import type { CityBuilding, CityPlaza, CityDecoration, CityRiver, CityBridge } from "@/lib/github";
 import { seededRandom } from "@/lib/github";
-import SkyAds from "./SkyAds";
-import BuildingAds from "./BuildingAds";
-import type { SkyAd } from "@/lib/skyAds";
+
+
 import RaidSequence3D, { VehicleMesh } from "./RaidSequence3D";
 import type { RaidPhase } from "@/lib/useRaidSequence";
 import type { RaidExecuteResponse } from "@/lib/raid";
@@ -223,18 +222,18 @@ const TARGET_Y = 450;
 const INTRO_WAYPOINTS: [number, number, number][] = [
   [-1600, 800, 1800],   // WP0: Far, high, left - city hidden in fog
   [-1000, 700, 1300],   // WP1: Descending, silhouette appears
-  [-600,  600, 900],    // WP2: Ad plane level, buildings becoming clear
-  [-200,  550, 650],    // WP3: Skirting the city edge
-  [200,   600, 600],    // WP4: Crossing over
-  [500,   700, 700],    // WP5: Rising, pulling back
-  [700,   800, 900],    // WP6: Dramatic pullback
-  [800,   850, 1000],   // WP7: Final orbit position (wide panorama)
+  [-600, 600, 900],    // WP2: Ad plane level, buildings becoming clear
+  [-200, 550, 650],    // WP3: Skirting the city edge
+  [200, 600, 600],    // WP4: Crossing over
+  [500, 700, 700],    // WP5: Rising, pulling back
+  [700, 800, 900],    // WP6: Dramatic pullback
+  [800, 850, 1000],   // WP7: Final orbit position (wide panorama)
 ];
 
 // Look targets smoothly converge toward the founder building top
 const INTRO_LOOK_TARGETS: [number, number, number][] = [
-  [100,      300,      -200],      // WP0: Toward distant city, already high
-  [TARGET_X, 380,      TARGET_Z],  // WP1: Rising toward founder top
+  [100, 300, -200],      // WP0: Toward distant city, already high
+  [TARGET_X, 380, TARGET_Z],  // WP1: Rising toward founder top
   [TARGET_X, TARGET_Y, TARGET_Z],  // WP2: Locking on
   [TARGET_X, TARGET_Y, TARGET_Z],  // WP3: Holding
   [TARGET_X, TARGET_Y, TARGET_Z],  // WP4: Holding
@@ -494,7 +493,7 @@ function CameraFocus({
     if (controlsRef.current) {
       controlsRef.current.autoRotate = false;
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [focusedBuilding, focusedBuildingB, camera, controlsRef]);
 
   useFrame((_, delta) => {
@@ -1831,9 +1830,7 @@ interface Props {
   onFocusInfo?: (info: FocusInfo) => void;
   flyPauseSignal?: number;
   flyHasOverlay?: boolean;
-  skyAds?: SkyAd[];
-  onAdClick?: (ad: SkyAd) => void;
-  onAdViewed?: (adId: string) => void;
+
   introMode?: boolean;
   onIntroEnd?: () => void;
   raidPhase?: RaidPhase;
@@ -1855,7 +1852,7 @@ interface Props {
 // Plaza indices for rabbit sightings (progressively further from center)
 const RABBIT_PLAZA_INDICES = [1, 2, 4, 7, 10]; // plazas[1]=slot3, [2]=slot7, [4]=slot18, [7]=slot42, [10]=slot75
 
-export default function CityCanvas({ buildings, plazas, decorations, river, bridges, flyMode, flyVehicle, onExitFly, onCollect, themeIndex, onHud, onPause, focusedBuilding, focusedBuildingB, accentColor, onClearFocus, onBuildingClick, onFocusInfo, flyPauseSignal, flyHasOverlay, skyAds, onAdClick, onAdViewed, introMode, onIntroEnd, raidPhase, raidData, raidAttacker, raidDefender, onRaidPhaseComplete, onLandmarkClick, rabbitSighting, onRabbitCaught, rabbitCinematic, onRabbitCinematicEnd, rabbitCinematicTarget, ghostPreviewLogin, holdRise, celebrationActive }: Props) {
+export default function CityCanvas({ buildings, plazas, decorations, river, bridges, flyMode, flyVehicle, onExitFly, onCollect, themeIndex, onHud, onPause, focusedBuilding, focusedBuildingB, accentColor, onClearFocus, onBuildingClick, onFocusInfo, flyPauseSignal, flyHasOverlay, introMode, onIntroEnd, raidPhase, raidData, raidAttacker, raidDefender, onRaidPhaseComplete, onLandmarkClick, rabbitSighting, onRabbitCaught, rabbitCinematic, onRabbitCinematicEnd, rabbitCinematicTarget, ghostPreviewLogin, holdRise, celebrationActive }: Props) {
   const t = THEMES[themeIndex] ?? THEMES[0];
   const showPerf = typeof window !== "undefined" && new URLSearchParams(window.location.search).has("perf");
   const [dpr, setDpr] = useState(1);
@@ -1892,13 +1889,13 @@ export default function CityCanvas({ buildings, plazas, decorations, river, brid
 
       <SkyDome key={`sky-${themeIndex}`} stops={t.sky} />
 
-      {introMode && <IntroFlyover onEnd={onIntroEnd ?? (() => {})} />}
+      {introMode && <IntroFlyover onEnd={onIntroEnd ?? (() => { })} />}
 
       {rabbitCinematic && rabbitCinematicTarget != null && (
         <RabbitFlyover
           targetPlazaIndex={RABBIT_PLAZA_INDICES[(rabbitCinematicTarget - 1)] ?? 1}
           plazas={plazas}
-          onEnd={onRabbitCinematicEnd ?? (() => {})}
+          onEnd={onRabbitCinematicEnd ?? (() => { })}
         />
       )}
 
@@ -1912,20 +1909,20 @@ export default function CityCanvas({ buildings, plazas, decorations, river, brid
           attacker={raidAttacker ?? null}
           defender={raidDefender ?? null}
           raidData={raidData ?? null}
-          onPhaseComplete={onRaidPhaseComplete ?? (() => {})}
+          onPhaseComplete={onRaidPhaseComplete ?? (() => { })}
         />
       )}
 
       {!introMode && flyMode && (
         <>
-          <AirplaneFlight onExit={onExitFly} onHud={onHud ?? (() => {})} onPause={onPause ?? (() => {})} pauseSignal={flyPauseSignal} hasOverlay={flyHasOverlay} vehicleType={flyVehicle} posRef={flyPosRef} />
-          <SkyCollectibles playerPosRef={flyPosRef} accentColor={accentColor ?? "#6090e0"} onCollect={onCollect ?? (() => {})} cityRadius={cityRadius} />
+          <AirplaneFlight onExit={onExitFly} onHud={onHud ?? (() => { })} onPause={onPause ?? (() => { })} pauseSignal={flyPauseSignal} hasOverlay={flyHasOverlay} vehicleType={flyVehicle} posRef={flyPosRef} />
+          <SkyCollectibles playerPosRef={flyPosRef} accentColor={accentColor ?? "#6090e0"} onCollect={onCollect ?? (() => { })} cityRadius={cityRadius} />
         </>
       )}
 
       <Ground key={`ground-${themeIndex}`} color={t.groundColor} grid1={t.grid1} grid2={t.grid2} />
 
-      <FounderSpire onClick={onLandmarkClick ?? (() => {})} />
+      <FounderSpire onClick={onLandmarkClick ?? (() => { })} />
 
       {celebrationActive && <CelebrationEffect cityRadius={cityRadius} />}
 
@@ -1938,7 +1935,7 @@ export default function CityCanvas({ buildings, plazas, decorations, river, brid
           <WhiteRabbit
             position={pos}
             visible={true}
-            onCaught={onRabbitCaught ?? (() => {})}
+            onCaught={onRabbitCaught ?? (() => { })}
           />
         );
       })()}
@@ -1972,19 +1969,7 @@ export default function CityCanvas({ buildings, plazas, decorations, river, brid
 
       <InstancedDecorations items={decorations} roadMarkingColor={t.roadMarkingColor} sidewalkColor={t.sidewalkColor} />
 
-      {skyAds && skyAds.length > 0 && (
-        <>
-          <SkyAds ads={skyAds} cityRadius={cityRadius} flyMode={flyMode} onAdClick={onAdClick} onAdViewed={onAdViewed} />
-          <BuildingAds
-            ads={skyAds}
-            buildings={buildings}
-            onAdClick={onAdClick}
-            onAdViewed={onAdViewed}
-            focusedBuilding={raidPhase && raidPhase !== "idle" && raidPhase !== "preview" && raidPhase !== "share" && raidPhase !== "done" ? (raidDefender?.login ?? focusedBuilding) : focusedBuilding}
-            focusedBuildingB={raidPhase && raidPhase !== "idle" && raidPhase !== "preview" && raidPhase !== "share" && raidPhase !== "done" ? (raidAttacker?.login ?? null) : focusedBuildingB}
-          />
-        </>
-      )}
+
 
       {bloomEnabled && (
         <EffectComposer multisampling={0}>

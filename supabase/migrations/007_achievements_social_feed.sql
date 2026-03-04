@@ -8,16 +8,6 @@ alter table developers add column if not exists visit_count int not null default
 alter table developers add column if not exists referred_by text;
 alter table developers add column if not exists referral_count int not null default 0;
 
--- 2. Extend purchases table for gifts
-alter table purchases add column if not exists gifted_to bigint references developers(id);
-
--- Drop the old unique index and recreate to allow gifts
--- Old: unique on (developer_id, item_id) where status = 'completed'
--- New: unique on (developer_id, item_id, coalesce(gifted_to, 0)) where status = 'completed'
-drop index if exists idx_purchases_unique_completed;
-create unique index idx_purchases_unique_completed
-  on purchases(developer_id, item_id, coalesce(gifted_to, 0)) where status = 'completed';
-
 -- 3. Achievements catalog (static)
 create table if not exists achievements (
   id              text primary key,

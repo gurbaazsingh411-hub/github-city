@@ -10,8 +10,7 @@ alter table items add column if not exists max_quantity int default null;
 -- Exclusive flag: item will never return after expiring (collector's item)
 alter table items add column if not exists is_exclusive boolean default false;
 
--- Computed: current purchase count per item (for remaining calculation)
--- We already have the purchases table, so remaining = max_quantity - count(purchases where item_id = X)
+-- Note: max_quantity tracking is informational only in showcase mode
 
 -- Index for quick availability checks
 create index if not exists idx_items_available_until on items (available_until) where available_until is not null;
